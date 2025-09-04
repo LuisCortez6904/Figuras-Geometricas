@@ -1,135 +1,197 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Figuras_Geometricas
 {
-    abstract class FigureGeometrica {
-        public abstract string Description();
+    abstract class FiguraGeometrica
+    {
+        public abstract string Descripcion();
         public abstract double Area();
+        public virtual void MostrarInformacion()
+        {
+            Console.WriteLine(Descripcion());
+            Console.WriteLine($"Área: {Area():F2} unidades cuadradas");
+        }
     }
-    class Cuadrilatero : FigureGeometrica {
+
+    class Cuadrilatero : FiguraGeometrica
+    {
         private double baseCuadrilatero;
         private double altura;
-        public Cuadrilatero(double baseCuadrilatero, double altura) {
+
+        public Cuadrilatero(double baseCuadrilatero, double altura)
+        {
+            if (baseCuadrilatero <= 0 || altura <= 0)
+                throw new ArgumentException("Las dimensiones deben ser valores positivos");
+
             this.baseCuadrilatero = baseCuadrilatero;
             this.altura = altura;
         }
 
-        public override string Description()
+        public override string Descripcion()
         {
-            //If condicional de comparacion de altura con base
-            //para determinar si es cuadro o rectangulo
-            return "Figura geometrica Cuadrilatero";
-            //throw new NotImplementedException();
+            if (baseCuadrilatero == altura)
+                return "Figura geométrica: Cuadrado";
+            else
+                return "Figura geométrica: Rectángulo";
         }
-        public override double Area(){
+
+        public override double Area()
+        {
             return baseCuadrilatero * altura;
-            }
+        }
+
+        public override void MostrarInformacion()
+        {
+            base.MostrarInformacion();
+            Console.WriteLine($"Base: {baseCuadrilatero}, Altura: {altura}");
+        }
     }
-    class Triangulo : FigureGeometrica {
+
+    class Triangulo : FiguraGeometrica
+    {
         private double baseTriangulo;
         private double altura;
 
-        public Triangulo(double baseTriangulo, double altura) {
+        public Triangulo(double baseTriangulo, double altura)
+        {
+            if (baseTriangulo <= 0 || altura <= 0)
+                throw new ArgumentException("Las dimensiones deben ser valores positivos");
+
             this.baseTriangulo = baseTriangulo;
             this.altura = altura;
         }
-        public override string Description()
+
+        public override string Descripcion()
         {
-            return "Figura geometrica Triangulo";
-            //throw new NotImplementedException();){ }
+            return "Figura geométrica: Triángulo";
         }
+
         public override double Area()
         {
             return (baseTriangulo * altura) / 2;
-            //throw new NotImplementedException();)
+        }
+
+        public override void MostrarInformacion()
+        {
+            base.MostrarInformacion();
+            Console.WriteLine($"Base: {baseTriangulo}, Altura: {altura}");
         }
     }
-    class Circulo : FigureGeometrica {
+
+    class Circulo : FiguraGeometrica
+    {
         private double radio;
-        public Circulo(double radio) {
+
+        public Circulo(double radio)
+        {
+            if (radio <= 0)
+                throw new ArgumentException("El radio debe ser un valor positivo");
+
             this.radio = radio;
         }
-        //Overrider es el palabra clave para
-        //la relacion con la clase abstracta (Principal)
-        public override string Description() {
-            return "Figura geometrica circulo";
+
+        public override string Descripcion()
+        {
+            return "Figura geométrica: Círculo";
         }
-        public override double Area() {
-            return (radio * radio) * Math.PI;
+
+        public override double Area()
+        {
+            return Math.PI * Math.Pow(radio, 2);
+        }
+
+        public override void MostrarInformacion()
+        {
+            base.MostrarInformacion();
+            Console.WriteLine($"Radio: {radio}");
         }
     }
+
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Seleccione una Figura Geometrica");
-            Console.WriteLine("1. Cuadrilatero");
-            Console.WriteLine("2. Triangulo");
-            Console.WriteLine("3. Circulo");
-            Console.WriteLine("Ingrese un numero entero del 1 al 3");
-            string input = Console.ReadLine();
-            int opcion;
-            if (!int.TryParse(input, out opcion))
+            try
             {
-                Console.WriteLine("Error: Debes Ingresar un numero entero.");
-                return;
-            }
-            else
-            {
-                FigureGeometrica figura = null;
+                Console.WriteLine("=== CALCULADORA DE ÁREAS DE FIGURAS GEOMÉTRICAS ===");
+                Console.WriteLine("Seleccione una Figura Geométrica");
+                Console.WriteLine("1. Cuadrilátero");
+                Console.WriteLine("2. Triángulo");
+                Console.WriteLine("3. Círculo");
+                Console.Write("Ingrese un número entero del 1 al 3: ");
+
+                string input = Console.ReadLine();
+                if (!int.TryParse(input, out int opcion) || opcion < 1 || opcion > 3)
+                {
+                    Console.WriteLine("Error: Debe ingresar un número entero válido entre 1 y 3.");
+                    return;
+                }
+
+                FiguraGeometrica figura = null;
+
                 switch (opcion)
                 {
                     case 1:
-                        Console.WriteLine("Ingrese la base del Cuadrilatero");
-                        if (!double.TryParse(Console.ReadLine(), out double baseCuadrilatero)) {
-                            Console.WriteLine("Error: Debes Ingresar un numero para la base del cuadrilatero.");
-                            return;
-                        }
-                        Console.WriteLine("Ingrese la altura del Cuadrilatero");
-                        if (!double.TryParse(Console.ReadLine(), out double altura))
-                        {
-                            Console.WriteLine("Error: Debes Ingresar un numero para la altura del cuadrilatero.");
-                            return;
-                        }
-                        figura = new Cuadrilatero(baseCuadrilatero, altura);
+                        figura = CrearCuadrilatero();
                         break;
                     case 2:
-                        Console.WriteLine("Ingrese la base del triángulo: ");
-                        if (!double.TryParse(Console.ReadLine(), out double baseTri))
-                        {
-                            Console.WriteLine("Error: Entrada inválida para la base.");
-                            return;
-                        }
-                        Console.Write("Ingrese la altura del triángulo: ");
-                        if (!double.TryParse(Console.ReadLine(), out double alturaTri))
-                        {
-                            Console.WriteLine("Error: Entrada inválida para la altura.");
-                            return;
-                        }
-                        figura = new Triangulo(baseTri, alturaTri);
+                        figura = CrearTriangulo();
                         break;
                     case 3:
-                        Console.Write("Ingrese el radio del círculo: ");
-                        if (!double.TryParse(Console.ReadLine(), out double radio))
-                        {
-                            Console.WriteLine("Error: Entrada inválida para el radio.");
-                            return;
-                        }
-                        figura = new Circulo(radio);
+                        figura = CrearCirculo();
                         break;
-
-                    default:
-                        Console.WriteLine("Opción no válida.");
-                        return;
                 }
-                Console.WriteLine(figura.Description());
-                Console.WriteLine($"El área es: {figura.Area():F2}");
+
+                if (figura != null)
+                {
+                    Console.WriteLine("\n=== RESULTADOS ===");
+                    figura.MostrarInformacion();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                Console.WriteLine("\nPresione cualquier tecla para salir...");
                 Console.ReadKey();
             }
+        }
+
+        static Cuadrilatero CrearCuadrilatero()
+        {
+            Console.Write("Ingrese la base del cuadrilátero: ");
+            if (!double.TryParse(Console.ReadLine(), out double baseFigura) || baseFigura <= 0)
+                throw new ArgumentException("Debe ingresar un número válido y positivo para la base");
+
+            Console.Write("Ingrese la altura del cuadrilátero: ");
+            if (!double.TryParse(Console.ReadLine(), out double altura) || altura <= 0)
+                throw new ArgumentException("Debe ingresar un número válido y positivo para la altura");
+
+            return new Cuadrilatero(baseFigura, altura);
+        }
+
+        static Triangulo CrearTriangulo()
+        {
+            Console.Write("Ingrese la base del triángulo: ");
+            if (!double.TryParse(Console.ReadLine(), out double baseFigura) || baseFigura <= 0)
+                throw new ArgumentException("Debe ingresar un número válido y positivo para la base");
+
+            Console.Write("Ingrese la altura del triángulo: ");
+            if (!double.TryParse(Console.ReadLine(), out double altura) || altura <= 0)
+                throw new ArgumentException("Debe ingresar un número válido y positivo para la altura");
+
+            return new Triangulo(baseFigura, altura);
+        }
+
+        static Circulo CrearCirculo()
+        {
+            Console.Write("Ingrese el radio del círculo: ");
+            if (!double.TryParse(Console.ReadLine(), out double radio) || radio <= 0)
+                throw new ArgumentException("Debe ingresar un número válido y positivo para el radio");
+
+            return new Circulo(radio);
         }
     }
 }
